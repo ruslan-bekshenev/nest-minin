@@ -13,42 +13,39 @@ import {
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { ProductsService } from './products.service';
+import { Product } from './schemas/product.schema';
 
 @Controller('products')
 export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}
 
-  // @Get()
-  // // @Redirect('https://google.com', 301)
-  // getAll(@Req() req: Request, @Res() res: Response): string {
-  //   res.status(201).end('Poke');
-  //   return 'getAll';
-  // }
-
   @Get()
-  getAll() {
+  getAll(): Promise<Product[]> {
     return this.productsService.getAll();
   }
 
   @Get(':id')
-  getOne(@Param('id') id: string): string {
+  getOne(@Param('id') id: string): Promise<Product> {
     return this.productsService.getById(id);
   }
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
   @Header('Cache-control', 'none')
-  create(@Body() createProductDto: CreateProductDto): void {
+  create(@Body() createProductDto: CreateProductDto): Promise<Product> {
     return this.productsService.create(createProductDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return 'Remove ' + id;
+  remove(@Param('id') id: string): Promise<Product> {
+    return this.productsService.remove(id);
   }
 
   @Put(':id')
-  update(@Body() updateProduceDto: UpdateProductDto, @Param('id') id: string) {
-    return 'Update ' + id;
+  update(
+    @Body() updateProduceDto: UpdateProductDto,
+    @Param('id') id: string,
+  ): Promise<Product> {
+    return this.productsService.update(id, updateProduceDto);
   }
 }
